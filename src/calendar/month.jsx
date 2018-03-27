@@ -33,8 +33,10 @@ export default class Month extends React.Component {
         end: datePropType.isRequired,
       })
     ),
-    highlightedEnd: datePropType,
-    highlightedStart: datePropType,
+    highlighted: PropTypes.arrayOf(_propTypes2.default.shape({
+      start: datePropType.isRequired,
+      end: datePropType.isRequired
+    })),
     maxDate: datePropType,
     minDate: datePropType,
     minNumberOfWeeks: PropTypes.number,
@@ -212,8 +214,7 @@ export default class Month extends React.Component {
     const {
       selectedMin,
       selectedMax,
-      highlightedStart,
-      highlightedEnd,
+      highlighted,
       disabledIntervals,
       activeMonth,
       today,
@@ -250,8 +251,7 @@ export default class Month extends React.Component {
           maxDate={maxDate}
           selectedMin={selectedMin}
           selectedMax={selectedMax}
-          highlightedStart={highlightedStart}
-          highlightedEnd={highlightedEnd}
+          highlighted={highlighted}
           disabledIntervals={disabledIntervals}
           activeMonth={activeMonth}
           onDayHover={onDayHover}

@@ -123,16 +123,18 @@ export default class Calendar extends React.Component {
   }
 
   _highlight() {
-    const {highlighted} = this.props
-    if (!highlighted) return {start: null, end: null}
+    var highlighted = this.props.highlighted;
 
-    const {start, end} = highlighted
+      if (!highlighted) return { highlighted: null };
 
-    if (isValid(start) && isValid(end)) {
-      return {start, end}
-    } else {
-      return {start: null, end: null}
-    }
+      highlighted.filter(date => {
+        var start = date.start,
+            end = date.end;
+
+        return isValid(start) && isValid(end)
+      });
+
+      return { highlighted };
   }
 
   _selection() {
@@ -246,8 +248,7 @@ export default class Calendar extends React.Component {
           selectedMax={selection.end}
           disableDaysOfWeek={disableDaysOfWeek}
           onDayHover={onDayHover}
-          highlightedStart={highlight.start}
-          highlightedEnd={highlight.end}
+          highlighted={highlight}
           onChange={this._selectionChanged.bind(this)}
           onNoticeChange={this._noticeChanged.bind(this)}
           blockClassName={blockClassName}

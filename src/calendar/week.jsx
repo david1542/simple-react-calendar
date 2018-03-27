@@ -4,9 +4,9 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames'
 
 import Day from './day'
-import {BLOCK_CLASS_NAME} from './consts'
-import {DAYS_IN_WEEK} from './consts'
-import {datePropType} from './_lib'
+import { BLOCK_CLASS_NAME } from './consts'
+import { DAYS_IN_WEEK } from './consts'
+import { datePropType } from './_lib'
 
 import eachDay from 'date-fns/each_day'
 import startOfDay from 'date-fns/start_of_day'
@@ -33,8 +33,10 @@ export default class Week extends React.Component {
         end: datePropType.isRequired,
       })
     ),
-    highlightedEnd: datePropType,
-    highlightedStart: datePropType,
+    highlighted: PropTypes.arrayOf(_propTypes2.default.shape({
+      start: datePropType.isRequired,
+      end: datePropType.isRequired
+    })),
     maxDate: datePropType,
     minDate: datePropType,
     onDayClick: PropTypes.func.isRequired,
@@ -52,7 +54,7 @@ export default class Week extends React.Component {
   }
 
   _dateSelectable(date) {
-    const {minDate, maxDate} = this.props
+    const { minDate, maxDate } = this.props
 
     if (this._dateDisabled(date)) {
       return false
@@ -70,26 +72,32 @@ export default class Week extends React.Component {
   }
 
   _dateSelected(date) {
-    const {selectedMin, selectedMax} = this.props
+    const { selectedMin, selectedMax } = this.props
     return (
       selectedMin && selectedMax && isWithinRange(startOfDay(date), startOfDay(selectedMin), startOfDay(selectedMax))
     )
   }
 
   _dateHighlighted(date) {
-    const {highlightedStart, highlightedEnd} = this.props
-    if (!highlightedStart || !highlightedEnd) return false
+    const { highlighted } = this.props;
 
-    return isWithinRange(startOfDay(date), startOfDay(highlightedStart), startOfDay(highlightedEnd))
+    return highlighted.some(highlightedDate => {
+      const highlightedStart = highlightedDate.start,
+        highlightedEnd = highlightedDate.end;
+
+      if (!highlightedStart || !highlightedEnd) return false;
+
+      return isWithinRange(startOfDay(date), startOfDay(highlightedStart), startOfDay(highlightedEnd))      
+    });
   }
 
   _dateDisabled(date) {
     let dateDisabled
-    const {disabledIntervals} = this.props
+    const { disabledIntervals } = this.props
     if (!disabledIntervals) return false
 
     for (let i = 0; i < disabledIntervals.length; i++) {
-      const {start, end} = disabledIntervals[i]
+      const { start, end } = disabledIntervals[i]
 
       dateDisabled = isWithinRange(startOfDay(date), startOfDay(start), startOfDay(end))
 
@@ -102,7 +110,7 @@ export default class Week extends React.Component {
   }
 
   _dateClasses(date) {
-    const {today, activeMonth, selectedMax, selectedMin} = this.props
+    const { today, activeMonth, selectedMax, selectedMin } = this.props
 
     return classnames({
       'is-selected': this._dateSelected(date),
@@ -124,9 +132,9 @@ export default class Week extends React.Component {
   }
 
   _renderDays() {
-    const {date, today, onDayClick, onDisabledDayClick, onDayMouseMove, blockClassName, weekStartsOn} = this.props
-    const start = startOfWeek(date, {weekStartsOn})
-    const end = endOfWeek(date, {weekStartsOn})
+    const { date, today, onDayClick, onDisabledDayClick, onDayMouseMove, blockClassName, weekStartsOn } = this.props
+    const start = startOfWeek(date, { weekStartsOn })
+    const end = endOfWeek(date, { weekStartsOn })
     return eachDay(start, end).map((day) => {
       const data = this.props.data[format(day, 'YYYY-MM-DD')]
       const selectable = this._dateSelectable(day)
